@@ -2,7 +2,6 @@ FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Build deps + runtime libs
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential gcc-11 g++-11 \
         git git-lfs cmake \
@@ -17,11 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl wget ca-certificates \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Pin GCC 11
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 200 \
  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 200
 
-# Vulkan ICD fallback
 RUN mkdir -p /etc/vulkan/icd.d && \
     echo '{"file_format_version":"1.0.0","ICD":{"library_path":"libGLX_nvidia.so.0","api_version":"1.3.0"}}' \
     > /etc/vulkan/icd.d/nvidia_icd.json
@@ -29,6 +26,7 @@ RUN mkdir -p /etc/vulkan/icd.d && \
 ENV NVIDIA_DRIVER_CAPABILITIES=all
 ENV ACCEPT_EULA=Y
 ENV PRIVACY_CONSENT=Y
+ENV OMNI_KIT_ALLOW_ROOT=1
 
 WORKDIR /workspace/isaacsim
 
